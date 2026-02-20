@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 213 56% 24%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 18% 93%;
+    --secondary-foreground: 213 56% 24%;
+
+    --muted: 210 14% 95%;
+    --muted-foreground: 215 14% 46%;
+
+    --accent: 210 18% 90%;
+    --accent-foreground: 213 56% 24%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 35%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 213 56% 24%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 213 56% 17%;
+    --sidebar-foreground: 210 20% 88%;
+    --sidebar-primary: 199 89% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 213 50% 22%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 213 40% 25%;
+    --sidebar-ring: 199 89% 48%;
+    --sidebar-muted: 213 30% 35%;
+  }
+
+  .dark {
+    --background: 215 25% 10%;
+    --foreground: 210 20% 95%;
+    --card: 215 25% 13%;
+    --card-foreground: 210 20% 95%;
+    --popover: 215 25% 13%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 20% 18%;
+    --secondary-foreground: 210 20% 95%;
+    --muted: 215 20% 18%;
+    --muted-foreground: 215 14% 55%;
+    --accent: 215 20% 20%;
+    --accent-foreground: 210 20% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 20% 20%;
+    --input: 215 20% 20%;
+    --ring: 199 89% 48%;
+    --sidebar-background: 215 30% 8%;
+    --sidebar-foreground: 210 20% 88%;
+    --sidebar-primary: 199 89% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 14%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 215 20% 15%;
+    --sidebar-ring: 199 89% 48%;
+    --sidebar-muted: 215 20% 30%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+@layer components {
+  .stat-card {
+    @apply bg-card rounded-lg border p-5 shadow-sm transition-shadow hover:shadow-md cursor-pointer;
+  }
+
+  .data-table {
+    @apply w-full text-sm;
+  }
+
+  .data-table th {
+    @apply text-left font-medium text-muted-foreground py-3 px-4 border-b bg-muted/50;
+  }
+
+  .data-table td {
+    @apply py-3 px-4 border-b;
+  }
+
+  .data-table tr:hover td {
+    @apply bg-muted/30;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))];
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[hsl(var(--warning))] text-[hsl(var(--warning-foreground))];
+  }
+
+  .badge-danger {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))];
+  }
+
+  .badge-info {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-[hsl(var(--info))] text-[hsl(var(--info-foreground))];
+  }
+
+  .page-header {
+    @apply text-2xl font-semibold text-foreground;
+  }
+
+  .section-label {
+    @apply text-sm font-medium text-muted-foreground uppercase tracking-wider;
+  }
+}
