@@ -1,12 +1,23 @@
 // Auto Spare Manager - Type Definitions
+export interface ProductResponse {
+  data: Product[];
+  meta: {
+    page: number;
+    take: number;
+    itemCount: number;
+    pageCount: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+  };
+}
 
 export interface Product {
   id: string;
-  name: string;
-  sku: string;
+  partName: string;
+  partCode: string;
   category: string;
-  brand: string;
-  price: number;
+  vehicleBrand: string;
+  sellingPrice: number;
   stock: number;
   lowStockThreshold: number;
 }

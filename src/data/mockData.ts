@@ -5,16 +5,16 @@ import type { Product, Customer, Mechanic, Sale, Payment, InventoryTransaction }
 export type { Product, Customer, Sale, SaleItem, Mechanic, Payment, InventoryTransaction } from "@/types";
 
 export const products: Product[] = [
-  { id: "P001", name: "Brake Pad Set - Front", sku: "BP-F-001", category: "Brakes", brand: "Bosch", price: 1200, stock: 45, lowStockThreshold: 10 },
-  { id: "P002", name: "Oil Filter", sku: "OF-001", category: "Filters", brand: "Mann", price: 350, stock: 8, lowStockThreshold: 15 },
-  { id: "P003", name: "Spark Plug - Iridium", sku: "SP-IR-001", category: "Ignition", brand: "NGK", price: 450, stock: 120, lowStockThreshold: 20 },
-  { id: "P004", name: "Air Filter", sku: "AF-001", category: "Filters", brand: "K&N", price: 800, stock: 3, lowStockThreshold: 10 },
-  { id: "P005", name: "Clutch Plate", sku: "CP-001", category: "Transmission", brand: "Valeo", price: 3500, stock: 12, lowStockThreshold: 5 },
-  { id: "P006", name: "Timing Belt", sku: "TB-001", category: "Engine", brand: "Gates", price: 1800, stock: 18, lowStockThreshold: 8 },
-  { id: "P007", name: "Radiator Coolant 1L", sku: "RC-001", category: "Cooling", brand: "Castrol", price: 280, stock: 55, lowStockThreshold: 15 },
-  { id: "P008", name: "Headlight Bulb H4", sku: "HB-H4-001", category: "Electrical", brand: "Philips", price: 650, stock: 30, lowStockThreshold: 10 },
-  { id: "P009", name: "Wiper Blade 18\"", sku: "WB-18-001", category: "Accessories", brand: "Bosch", price: 400, stock: 5, lowStockThreshold: 10 },
-  { id: "P010", name: "Engine Oil 5W-30 4L", sku: "EO-5W30-001", category: "Lubricants", brand: "Mobil", price: 2200, stock: 22, lowStockThreshold: 10 },
+  { id: "P001", partName: "Brake Pad Set - Front", partCode: "BP-F-001", category: "Brakes", vehicleBrand: "Bosch", sellingPrice: 1200, stock: 45, lowStockThreshold: 10 },
+  { id: "P002", partName: "Oil Filter", partCode: "OF-001", category: "Filters", vehicleBrand: "Mann", sellingPrice: 350, stock: 8, lowStockThreshold: 15 },
+  { id: "P003", partName: "Spark Plug - Iridium", partCode: "SP-IR-001", category: "Ignition", vehicleBrand: "NGK", sellingPrice: 450, stock: 120, lowStockThreshold: 20 },
+  { id: "P004", partName: "Air Filter", partCode: "AF-001", category: "Filters", vehicleBrand: "K&N", sellingPrice: 800, stock: 3, lowStockThreshold: 10 },
+  { id: "P005", partName: "Clutch Plate", partCode: "CP-001", category: "Transmission", vehicleBrand: "Valeo", sellingPrice: 3500, stock: 12, lowStockThreshold: 5 },
+  { id: "P006", partName: "Timing Belt", partCode: "TB-001", category: "Engine", vehicleBrand: "Gates", sellingPrice: 1800, stock: 18, lowStockThreshold: 8 },
+  { id: "P007", partName: "Radiator Coolant 1L", partCode: "RC-001", category: "Cooling", vehicleBrand: "Castrol", sellingPrice: 280, stock: 55, lowStockThreshold: 15 },
+  { id: "P008", partName: "Headlight Bulb H4", partCode: "HB-H4-001", category: "Electrical", vehicleBrand: "Philips", sellingPrice: 650, stock: 30, lowStockThreshold: 10 },
+  { id: "P009", partName: "Wiper Blade 18\"", partCode: "WB-18-001", category: "Accessories", vehicleBrand: "Bosch", sellingPrice: 400, stock: 5, lowStockThreshold: 10 },
+  { id: "P010", partName: "Engine Oil 5W-30 4L", partCode: "EO-5W30-001", category: "Lubricants",vehicleBrand: "Mobil", sellingPrice: 2200, stock: 22, lowStockThreshold: 10 },
 ];
 
 export const customers: Customer[] = [

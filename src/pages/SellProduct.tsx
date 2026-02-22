@@ -20,7 +20,7 @@ export default function SellProduct() {
   const filteredProducts = useMemo(() => {
     if (!searchQuery) return products;
     const q = searchQuery.toLowerCase();
-    return products.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+    return products.filter(p => p.partName.toLowerCase().includes(q) || p.partCode.toLowerCase().includes(q));
   }, [searchQuery]);
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -41,7 +41,7 @@ export default function SellProduct() {
         toast({ title: "Out of stock", variant: "destructive" });
         return prev;
       }
-      return [...prev, { productId: product.id, name: product.name, price: product.price, quantity: 1, stock: product.stock }];
+      return [...prev, { productId: product.id, name: product.partName, price: product.sellingPrice, quantity: 1, stock: product.stock }];
     });
   };
 

@@ -42,12 +42,12 @@ export function ProductSearchPanel({ searchQuery, onSearchChange, products, onAd
               <tr key={product.id}>
                 <td>
                   <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-xs text-muted-foreground">{product.brand}</p>
+                    <p className="font-medium">{product.partName}</p>
+                    <p className="text-xs text-muted-foreground">{product.vehicleBrand}</p>
                   </div>
                 </td>
-                <td className="text-muted-foreground">{product.sku}</td>
-                <td className="font-medium">₹{product.price.toLocaleString()}</td>
+                <td className="text-muted-foreground">{product.partCode}</td>
+                <td className="font-medium">₹{product.sellingPrice.toLocaleString()}</td>
                 <td>
                   <span className={product.stock <= product.lowStockThreshold ? (product.stock <= 5 ? "badge-danger" : "badge-warning") : "badge-success"}>
                     {product.stock}
