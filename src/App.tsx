@@ -7,13 +7,14 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import SellProduct from "./pages/SellProduct";
 import Customers from "./pages/Customers";
-import Products from "./pages/Products";
+import Products from "./pages/products/Products";
 import Inventory from "./pages/Inventory";
 import Payments from "./pages/Payments";
 import Mechanics from "./pages/Mechanics";
 import Reports from "./pages/Reports";
 import SettingsPage from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import ProductForm from "./pages/products/ProductForm";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,8 @@ const App = () => (
             <Route path="/sell" element={<SellProduct />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/add" element={<ProductForm />} />
+            <Route path="/products/edit/:id" element={<ProductForm />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/mechanics" element={<Mechanics />} />

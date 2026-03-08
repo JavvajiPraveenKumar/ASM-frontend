@@ -42,11 +42,11 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r-0">
       <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm">
-          AS
+          RG
         </div>
         {!collapsed && (
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-sidebar-accent-foreground">Auto Spare</span>
+            <span className="text-sm font-semibold text-sidebar-accent-foreground">Reddy Garage</span>
             <span className="text-xs text-sidebar-muted">Manager</span>
           </div>
         )}

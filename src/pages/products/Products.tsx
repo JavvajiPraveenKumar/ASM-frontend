@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ProductService } from "@/services/product.service";
 import { Product, ProductResponse } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -12,7 +13,7 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState("");
   const [meta, setMeta] = useState<ProductResponse["meta"] | null>(null);
   const { toast } = useToast();
-
+  const navigate = useNavigate();
   useEffect(() => {
     loadProducts();
   }, []);
@@ -43,7 +44,7 @@ export default function Products() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="page-header">Spare-Parts</h2>
-        <Button><Plus className="h-4 w-4 mr-2" /> Add Spare Part</Button>
+        <Button onClick={() => navigate("/products/add")}><Plus className="h-4 w-4 mr-2" /> Add Spare Part</Button>
       </div>
 
       <div className="bg-card rounded-lg border shadow-sm">
@@ -95,7 +96,7 @@ export default function Products() {
                           <span className="badge-success">In Stock</span>
                         )}
                       </td>
-                      <td><Button size="sm" variant="outline">Edit</Button></td>
+                      <td><Button size="sm" variant="outline" onClick={() => navigate(`/products/edit/${p.id}`)}>Edit</Button></td>
                     </tr>
                   ))
                 )}
