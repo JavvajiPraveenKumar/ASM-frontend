@@ -22,6 +22,19 @@ export interface Product {
   lowStockThreshold: number;
 }
 
+export interface Supplier {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export interface Customer {
   id: string;
   name: string;

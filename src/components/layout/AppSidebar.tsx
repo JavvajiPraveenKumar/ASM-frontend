@@ -26,6 +26,8 @@ const menuItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Sell Product", url: "/sell", icon: ShoppingCart },
   { title: "Customers", url: "/customers", icon: Users },
+  { title: "Categories", url: "/categories", icon: Users},
+  { title: "Suppliers", url: "/suppliers", icon: Users},
   { title: "Products", url: "/products", icon: Package },
   { title: "Inventory", url: "/inventory", icon: Warehouse },
   { title: "Payments", url: "/payments", icon: CreditCard },

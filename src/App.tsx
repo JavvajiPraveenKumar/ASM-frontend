@@ -15,6 +15,8 @@ import Reports from "./pages/reports/Reports";
 import SettingsPage from "./pages/settings/Settings";
 import NotFound from "./pages/not-found/NotFound";
 import ProductForm from "./pages/products/ProductForm";
+import Suppliers from "./pages/suppliers/suppliers";
+import Categories from "./pages/categories/categories";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/sell" element={<SellProduct />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/categories" element={<Categories />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/add" element={<ProductForm />} />
             <Route path="/products/edit/:id" element={<ProductForm />} />
