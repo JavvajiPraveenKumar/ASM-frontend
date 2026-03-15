@@ -10,7 +10,7 @@ export const ProductService = {
 
     // Get single product
     getProductById: async (id: string) => {
-        const response = await api.get<Product>(`/spare-parts/${id}`);
+        const response = await api.get<ProductResponse>(`/spare-parts/${id}`);
         return response.data;
     },
 

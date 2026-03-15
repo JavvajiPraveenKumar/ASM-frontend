@@ -64,7 +64,7 @@ export default function Products() {
               <thead>
                 <tr>
                   <th>Product</th>
-                  <th>SKU</th>
+                  <th>PartCode</th>
                   <th>Category</th>
                   <th>Brand</th>
                   <th>Price</th>
@@ -85,13 +85,13 @@ export default function Products() {
                     <tr key={p.id}>
                       <td className="font-medium">{p.partName}</td>
                       <td className="text-muted-foreground">{p.partCode}</td>
-                      <td>{p.category}</td>
+                      <td>{p.category.name}</td>
                       <td>{p.vehicleBrand}</td>
                       <td>₹{p.sellingPrice.toLocaleString()}</td>
-                      <td>{p.stock}</td>
+                      <td>{p.currentStock}</td>
                       <td>
-                        {p.stock <= p.lowStockThreshold ? (
-                          <span className={p.stock <= 5 ? "badge-danger" : "badge-warning"}>Low Stock</span>
+                        {p.currentStock <= p.lowStockThreshold ? (
+                          <span className={p.currentStock <= 5 ? "badge-danger" : "badge-warning"}>Low Stock</span>
                         ) : (
                           <span className="badge-success">In Stock</span>
                         )}

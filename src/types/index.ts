@@ -15,11 +15,14 @@ export interface Product {
   id: string;
   partName: string;
   partCode: string;
-  category: string;
+  categoryId: string;
   vehicleBrand: string;
   sellingPrice: number;
-  stock: number;
+  currentStock: number;
   lowStockThreshold: number;
+  category: {
+    name: string;
+  };
 }
 
 export interface Supplier {

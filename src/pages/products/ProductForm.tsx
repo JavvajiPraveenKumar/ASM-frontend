@@ -6,6 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ProductService } from "@/services/product.service";
+import { CategoryService } from "@/services/category.service";
+import { SupplierService } from "@/services/supplier.service";
+import { Category, Supplier } from "@/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 const emptyForm = {
   partCode: "",
@@ -37,8 +48,8 @@ const sections = [
     fields: [
       { name: "partName", label: "Part Name", placeholder: "Example: Front Brake Pad Set", type: "text" },
       { name: "partCode", label: "Part Code", placeholder: "Example: BP-FR-001", type: "text" },
-      { name: "categoryId", label: "Category Id", placeholder: "Example: 1 (Brakes category)", type: "number" },
-      { name: "supplierId", label: "Supplier Id", placeholder: "Example: 2 (Bosch Supplier)", type: "number" }
+      { name: "categoryId", label: "Category", placeholder: "Select category", type: "select" },
+      { name: "supplierId", label: "Supplier", placeholder: "Select supplier", type: "select" }
     ]
   },
   {
@@ -88,20 +99,36 @@ export default function ProductForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
 
   const set = (key: string, value: string | number | boolean) =>
     setForm(prev => ({ ...prev, [key]: value }));
 
   useEffect(() => {
+    const fetchLookups = async () => {
+      try {
+        const [catsRes, supsRes] = await Promise.all([
+          CategoryService.getCategories(),
+          SupplierService.getSuppliers()
+        ]);
+        setCategories(catsRes.data);
+        setSuppliers(supsRes.data);
+      } catch (error) {
+        console.error("Failed to load categories or suppliers", error);
+      }
+    };
+    fetchLookups();
+
     if (id) {
       const fetchProduct = async () => {
         setIsLoading(true);
         try {
-          const data = await ProductService.getProductById(id);
-          if (data) {
+          const response = await ProductService.getProductById(id);
+          if (response) {
             setForm({
               ...emptyForm,
-              ...data,
+              ...response.data,
             });
           }
         } catch (error) {
@@ -199,19 +226,49 @@ export default function ProductForm() {
 
                   <Label>{field.label}</Label>
 
-                  <Input
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    value={form[field.name as keyof typeof form] || ""}
-                    onChange={(e) =>
-                      set(
-                        field.name,
-                        field.type === "number"
-                          ? Number(e.target.value)
-                          : e.target.value
-                      )
-                    }
-                  />
+                  {field.name === "categoryId" ? (
+                    <Select
+                      value={form.categoryId ? form.categoryId.toString() : ""}
+                      onValueChange={(val) => set("categoryId", Number(val))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories?.map((c) => (
+                          <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : field.name === "supplierId" ? (
+                    <Select
+                      value={form.supplierId ? form.supplierId.toString() : ""}
+                      onValueChange={(val) => set("supplierId", Number(val))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a supplier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {suppliers?.map((s) => (
+                          <SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      value={form[field.name as keyof typeof form] || ""}
+                      onChange={(e) =>
+                        set(
+                          field.name,
+                          field.type === "number"
+                            ? Number(e.target.value)
+                            : e.target.value
+                        )
+                      }
+                    />
+                  )}
 
                   {errors[field.name] && (
                     <p className="text-sm text-destructive">{errors[field.name]}</p>
