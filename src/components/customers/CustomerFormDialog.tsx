@@ -3,21 +3,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import type { Customer } from "@/types";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: { name: string; phone: string }) => void;
+  customer?: Customer | null;
+  onSubmit: (data: Omit<Customer, "id">) => void;
 }
 
-export default function CustomerFormDialog({ open, onOpenChange, onSubmit }: Props) {
-  const [form, setForm] = useState({ name: "", phone: "" });
+const emptyForm = { name: "", phone: "", totalOutstanding: 0, totalSales: 0 };
+
+export default function CustomerFormDialog({ open, onOpenChange, customer, onSubmit }: Props) {
+  const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const isEdit = !!customer;
 
   useEffect(() => {
-    setForm({ name: "", phone: "" });
+    if (customer) {
+      setForm({
+        name: customer.name,
+        phone: customer.phone,
+        totalOutstanding: customer.totalOutstanding,
+        totalSales: customer.totalSales,
+      });
+    } else {
+      setForm(emptyForm);
+    }
     setErrors({});
-  }, [open]);
+  }, [customer, open]);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -34,27 +48,29 @@ export default function CustomerFormDialog({ open, onOpenChange, onSubmit }: Pro
     }
   };
 
+  const set = (key: string, value: string | number) => setForm(prev => ({ ...prev, [key]: value }));
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Add Customer</DialogTitle>
+          <DialogTitle>{isEdit ? "Edit Customer" : "Add Customer"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div>
             <Label>Customer Name</Label>
-            <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Rajesh Kumar" />
+            <Input value={form.name} onChange={e => set("name", e.target.value)} placeholder="e.g. Rajesh Kumar" />
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
           </div>
           <div>
             <Label>Phone</Label>
-            <Input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="e.g. 9876543210" />
+            <Input value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="e.g. 9876543210" />
             {errors.phone && <p className="text-sm text-destructive mt-1">{errors.phone}</p>}
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSubmit}>Add Customer</Button>
+          <Button onClick={handleSubmit}>{isEdit ? "Save Changes" : "Add Customer"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

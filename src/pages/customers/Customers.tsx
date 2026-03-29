@@ -1,20 +1,75 @@
-import { useState } from "react";
-import { Search, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Plus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { customers, recentSales, payments } from "@/data/mockData";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { recentSales, payments } from "@/data/mockData";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CustomerFormDialog from "@/components/customers/CustomerFormDialog";
+import { CustomerService } from "@/services/customer.service";
+import { useToast } from "@/hooks/use-toast";
+import type { Customer } from "@/types";
 
 export default function Customers() {
+  const [customersList, setCustomersList] = useState<Customer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const { toast } = useToast();
 
-  const filtered = customers.filter(c =>
+  useEffect(() => {
+    loadCustomers();
+  }, []);
+
+  const loadCustomers = async () => {
+    try {
+      setIsLoading(true);
+      const data = await CustomerService.getCustomers();
+      setCustomersList(data.data);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to load customers",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFormSubmit = async (data: Omit<Customer, "id">) => {
+    try {
+      if (editingCustomer) {
+        await CustomerService.updateCustomer(editingCustomer.id, data);
+        toast({ title: "Success", description: "Customer updated successfully" });
+      } else {
+        await CustomerService.createCustomer(data);
+        toast({ title: "Success", description: "Customer added successfully" });
+      }
+      loadCustomers();
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: `Failed to ${editingCustomer ? "update" : "add"} customer`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const openAddForm = () => {
+    setEditingCustomer(null);
+    setIsAddFormOpen(true);
+  };
+
+  const filtered = customersList.filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.phone.includes(searchQuery)
   );
 
-  const customer = customers.find(c => c.id === selectedCustomer);
+  const customer = customersList.find(c => c.id === selectedCustomer);
   const customerSales = recentSales.filter(s => s.customerId === selectedCustomer);
   const customerPayments = payments.filter(p => p.customerId === selectedCustomer);
 
@@ -22,7 +77,7 @@ export default function Customers() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="page-header">Customers</h2>
-        <Button><Plus className="h-4 w-4 mr-2" /> Add Customer</Button>
+        <Button onClick={openAddForm}><Plus className="h-4 w-4 mr-2" /> Add Customer</Button>
       </div>
 
       <div className="bg-card rounded-lg border shadow-sm">
@@ -33,34 +88,42 @@ export default function Customers() {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Outstanding</th>
-                <th>Total Sales</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(c => (
-                <tr key={c.id}>
-                  <td className="font-medium">{c.name}</td>
-                  <td className="text-muted-foreground">{c.phone}</td>
-                  <td>
-                    <span className={c.totalOutstanding > 0 ? "text-destructive font-medium" : "text-success"}>
-                      ₹{c.totalOutstanding.toLocaleString()}
-                    </span>
-                  </td>
-                  <td>{c.totalSales}</td>
-                  <td>
-                    <Button size="sm" variant="outline" onClick={() => setSelectedCustomer(c.id)}>View</Button>
-                  </td>
+          {isLoading ? (
+            <div className="flex justify-center items-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Outstanding</th>
+                  <th>Total Sales</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map(c => (
+                  <tr key={c.id}>
+                    <td className="font-medium">{c.name}</td>
+                    <td className="text-muted-foreground">{c.phone}</td>
+                    <td>
+                      <span className={(c.totalOutstanding || 0) > 0 ? "text-destructive font-medium" : "text-success"}>
+                        ₹{(c.totalOutstanding || 0).toLocaleString()}
+                      </span>
+                    </td>
+                    <td>{c.totalSales || 0}</td>
+                    <td>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => setSelectedCustomer(c.id)}>View</Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 
@@ -106,6 +169,13 @@ export default function Customers() {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      <CustomerFormDialog
+        open={isAddFormOpen}
+        onOpenChange={setIsAddFormOpen}
+        customer={editingCustomer}
+        onSubmit={handleFormSubmit}
+      />
     </div>
   );
 }
