@@ -65,9 +65,10 @@ export default function Customers() {
     setIsAddFormOpen(true);
   };
 
-  const filtered = customersList.filter(c =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.phone.includes(searchQuery)
-  );
+ const filtered = customersList.filter(c =>
+  (c.name ?? "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+  (c.phone ?? "").includes(searchQuery)
+);
 
   const customer = customersList.find(c => c.id === selectedCustomer);
   const customerSales = recentSales.filter(s => s.customerId === selectedCustomer);
@@ -106,11 +107,11 @@ export default function Customers() {
               <tbody>
                 {filtered.map(c => (
                   <tr key={c.id}>
-                    <td className="font-medium">{c.name}</td>
+                    <td className="font-medium">{c.customer_name}</td>
                     <td className="text-muted-foreground">{c.phone}</td>
                     <td>
                       <span className={(c.totalOutstanding || 0) > 0 ? "text-destructive font-medium" : "text-success"}>
-                        ₹{(c.totalOutstanding || 0).toLocaleString()}
+                      ₹{(customer?.totalOutstanding ?? 0).toLocaleString()}
                       </span>
                     </td>
                     <td>{c.totalSales || 0}</td>
@@ -128,47 +129,143 @@ export default function Customers() {
       </div>
 
       {/* Customer Detail Modal */}
-      <Dialog open={!!selectedCustomer} onOpenChange={() => setSelectedCustomer(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{customer?.name}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">{customer?.phone} · Outstanding: <span className="text-destructive font-medium">₹{customer?.totalOutstanding.toLocaleString()}</span></p>
+      <Dialog
+  open={!!selectedCustomer}
+  onOpenChange={() => setSelectedCustomer(null)}
+>
+  <DialogContent className="max-w-2xl">
+    <DialogHeader>
+      <DialogTitle>{customer?.name ?? "Customer Details"}</DialogTitle>
+    </DialogHeader>
 
-          <Tabs defaultValue="sales">
-            <TabsList>
-              <TabsTrigger value="sales">Sales History</TabsTrigger>
-              <TabsTrigger value="payments">Payments</TabsTrigger>
-            </TabsList>
-            <TabsContent value="sales">
-              <table className="data-table">
-                <thead><tr><th>Sale ID</th><th>Date</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th></tr></thead>
-                <tbody>
-                  {customerSales.map(s => (
-                    <tr key={s.id}>
-                      <td>{s.id}</td><td>{s.date}</td><td>₹{s.total.toLocaleString()}</td><td>₹{s.paid.toLocaleString()}</td>
-                      <td className={s.due > 0 ? "text-destructive font-medium" : ""}>₹{s.due.toLocaleString()}</td>
-                      <td><span className={s.status === "completed" ? "badge-success" : s.status === "credit" ? "badge-danger" : "badge-warning"}>{s.status}</span></td>
-                    </tr>
-                  ))}
-                  {customerSales.length === 0 && <tr><td colSpan={6} className="text-center text-muted-foreground py-4">No sales found</td></tr>}
-                </tbody>
-              </table>
-            </TabsContent>
-            <TabsContent value="payments">
-              <table className="data-table">
-                <thead><tr><th>Payment ID</th><th>Date</th><th>Sale</th><th>Amount</th><th>Method</th></tr></thead>
-                <tbody>
-                  {customerPayments.map(p => (
-                    <tr key={p.id}><td>{p.id}</td><td>{p.date}</td><td>{p.saleId}</td><td>₹{p.amount.toLocaleString()}</td><td>{p.method}</td></tr>
-                  ))}
-                  {customerPayments.length === 0 && <tr><td colSpan={5} className="text-center text-muted-foreground py-4">No payments found</td></tr>}
-                </tbody>
-              </table>
-            </TabsContent>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
+    <p className="text-sm text-muted-foreground">
+      {customer?.phone ?? "No Phone"} · Outstanding:
+      <span className="text-destructive font-medium">
+        ₹{(customer?.totalOutstanding ?? 0).toLocaleString()}
+      </span>
+    </p>
+
+    <Tabs defaultValue="sales">
+      <TabsList>
+        <TabsTrigger value="sales">Sales History</TabsTrigger>
+        <TabsTrigger value="payments">Payments</TabsTrigger>
+      </TabsList>
+
+      {/* SALES */}
+      <TabsContent value="sales">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Sale ID</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Due</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {customerSales.map((s) => (
+              <tr key={s.id}>
+                <td>{s.id}</td>
+
+                <td>{s.date ?? "-"}</td>
+
+                <td>
+                  ₹{(s.total ?? 0).toLocaleString()}
+                </td>
+
+                <td>
+                  ₹{(s.paid ?? 0).toLocaleString()}
+                </td>
+
+                <td
+                  className={
+                    (s.due ?? 0) > 0
+                      ? "text-destructive font-medium"
+                      : ""
+                  }
+                >
+                  ₹{(s.due ?? 0).toLocaleString()}
+                </td>
+
+                <td>
+                  <span
+                    className={
+                      s.status === "completed"
+                        ? "badge-success"
+                        : s.status === "credit"
+                        ? "badge-danger"
+                        : "badge-warning"
+                    }
+                  >
+                    {s.status ?? "-"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+
+            {customerSales.length === 0 && (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="text-center text-muted-foreground py-4"
+                >
+                  No sales found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </TabsContent>
+
+      {/* PAYMENTS */}
+      <TabsContent value="payments">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Date</th>
+              <th>Sale</th>
+              <th>Amount</th>
+              <th>Method</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {customerPayments.map((p) => (
+              <tr key={p.id}>
+                <td>{p.id}</td>
+
+                <td>{p.date ?? "-"}</td>
+
+                <td>{p.saleId ?? "-"}</td>
+
+                <td>
+                  ₹{(p.amount ?? 0).toLocaleString()}
+                </td>
+
+                <td>{p.method ?? "-"}</td>
+              </tr>
+            ))}
+
+            {customerPayments.length === 0 && (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="text-center text-muted-foreground py-4"
+                >
+                  No payments found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </TabsContent>
+    </Tabs>
+  </DialogContent>
+</Dialog>
 
       <CustomerFormDialog
         open={isAddFormOpen}

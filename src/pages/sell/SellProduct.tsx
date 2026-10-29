@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
-import { products, mechanics } from "@/data/mockData";
+import { useState, useMemo, useEffect } from "react";
+import { mechanics } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
 import type { CartItem, Product } from "@/types";
+import { ProductService } from "@/services/product.service";
 import { ProductSearchPanel } from "@/components/sell/ProductSearchPanel";
 import { CartPanel } from "@/components/sell/CartPanel";
 import { CheckoutSection } from "@/components/sell/CheckoutSection";
@@ -9,6 +10,8 @@ import { SaleConfirmDialog } from "@/components/sell/SaleConfirmDialog";
 
 export default function SellProduct() {
   const { toast } = useToast();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [paidAmount, setPaidAmount] = useState("");
@@ -17,31 +20,58 @@ export default function SellProduct() {
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [showConfirm, setShowConfirm] = useState(false);
 
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await ProductService.getProducts();
+      setProducts(data?.data || []);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load products. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const filteredProducts = useMemo(() => {
     if (!searchQuery) return products;
     const q = searchQuery.toLowerCase();
-    return products.filter(p => p.partName.toLowerCase().includes(q) || p.partCode.toLowerCase().includes(q));
-  }, [searchQuery]);
+    return products.filter(
+      p =>
+        p.partName?.toLowerCase().includes(q) ||
+        p.partCode?.toLowerCase().includes(q) ||
+        p.vehicleBrand?.toLowerCase().includes(q)
+    );
+  }, [searchQuery, products]);
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const paid = parseFloat(paidAmount) || 0;
   const due = Math.max(0, cartTotal - paid);
 
   const addToCart = (product: Product) => {
+    const availableStock = product.currentStock ?? product.stock ?? 0;
     setCart(prev => {
       const existing = prev.find(i => i.productId === product.id);
       if (existing) {
-        if (existing.quantity >= product.stock) {
-          toast({ title: "Stock limit reached", description: `Only ${product.stock} available`, variant: "destructive" });
+        if (existing.quantity >= availableStock) {
+          toast({ title: "Stock limit reached", description: `Only ${availableStock} available`, variant: "destructive" });
           return prev;
         }
         return prev.map(i => i.productId === product.id ? { ...i, quantity: i.quantity + 1 } : i);
       }
-      if (product.stock <= 0) {
+      if (availableStock <= 0) {
         toast({ title: "Out of stock", variant: "destructive" });
         return prev;
       }
-      return [...prev, { productId: product.id, name: product.partName, price: product.sellingPrice, quantity: 1, stock: product.stock }];
+      return [...prev, { productId: product.id, name: product.partName, price: product.sellingPrice, quantity: 1, stock: availableStock }];
     });
   };
 
@@ -96,6 +126,7 @@ export default function SellProduct() {
           onSearchChange={setSearchQuery}
           products={filteredProducts}
           onAddToCart={addToCart}
+          isLoading={isLoading}
         />
 
         <div className="lg:col-span-2 flex flex-col bg-card rounded-lg border shadow-sm overflow-hidden">

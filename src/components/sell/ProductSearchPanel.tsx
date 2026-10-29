@@ -1,7 +1,6 @@
-import { Search } from "lucide-react";
+import { Search, Loader2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import type { Product } from "@/types";
 
 interface ProductSearchPanelProps {
@@ -9,9 +8,16 @@ interface ProductSearchPanelProps {
   onSearchChange: (query: string) => void;
   products: Product[];
   onAddToCart: (product: Product) => void;
+  isLoading?: boolean;
 }
 
-export function ProductSearchPanel({ searchQuery, onSearchChange, products, onAddToCart }: ProductSearchPanelProps) {
+export function ProductSearchPanel({
+  searchQuery,
+  onSearchChange,
+  products,
+  onAddToCart,
+  isLoading = false,
+}: ProductSearchPanelProps) {
   return (
     <div className="lg:col-span-3 flex flex-col bg-card rounded-lg border shadow-sm overflow-hidden">
       <div className="p-4 border-b">
@@ -38,28 +44,49 @@ export function ProductSearchPanel({ searchQuery, onSearchChange, products, onAd
             </tr>
           </thead>
           <tbody>
-            {products.map(product => (
-              <tr key={product.id}>
-                <td>
-                  <div>
-                    <p className="font-medium">{product.partName}</p>
-                    <p className="text-xs text-muted-foreground">{product.vehicleBrand}</p>
+            {isLoading ? (
+              <tr>
+                <td colSpan={5} className="text-center py-8">
+                  <div className="flex justify-center items-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    <span className="text-muted-foreground">Loading products...</span>
                   </div>
                 </td>
-                <td className="text-muted-foreground">{product.partCode}</td>
-                <td className="font-medium">₹{product.sellingPrice.toLocaleString()}</td>
-                <td>
-                  <span className={product.stock <= product.lowStockThreshold ? (product.stock <= 5 ? "badge-danger" : "badge-warning") : "badge-success"}>
-                    {product.stock}
-                  </span>
-                </td>
-                <td>
-                  <Button size="sm" variant="outline" onClick={() => onAddToCart(product)} disabled={product.stock <= 0}>
-                    <Plus className="h-3 w-3" />
-                  </Button>
+              </tr>
+            ) : products.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="text-center py-8 text-muted-foreground">
+                  No products found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              products.map(product => {
+                const stock = product.currentStock ?? product.stock ?? 0;
+                const threshold = product.lowStockThreshold ?? 5;
+                return (
+                  <tr key={product.id}>
+                    <td>
+                      <div>
+                        <p className="font-medium">{product.partName}</p>
+                        <p className="text-xs text-muted-foreground">{product.vehicleBrand}</p>
+                      </div>
+                    </td>
+                    <td className="text-muted-foreground">{product.partCode}</td>
+                    <td className="font-medium">₹{product.sellingPrice?.toLocaleString()}</td>
+                    <td>
+                      <span className={stock <= threshold ? (stock <= 5 ? "badge-danger" : "badge-warning") : "badge-success"}>
+                        {stock}
+                      </span>
+                    </td>
+                    <td>
+                      <Button size="sm" variant="outline" onClick={() => onAddToCart(product)} disabled={stock <= 0}>
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

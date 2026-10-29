@@ -12,7 +12,7 @@ interface Props {
   onSubmit: (data: Omit<Customer, "id">) => void;
 }
 
-const emptyForm = { name: "", phone: "", totalOutstanding: 0, totalSales: 0 };
+const emptyForm = { customer_name: "", phone: "", totalOutstanding: 0, totalSales: 0 };
 
 export default function CustomerFormDialog({ open, onOpenChange, customer, onSubmit }: Props) {
   const [form, setForm] = useState(emptyForm);
@@ -22,8 +22,8 @@ export default function CustomerFormDialog({ open, onOpenChange, customer, onSub
   useEffect(() => {
     if (customer) {
       setForm({
-        name: customer.name,
-        phone: customer.phone,
+        customer_name:customer.customer_name,
+        customer_phone: customer.phone,
         totalOutstanding: customer.totalOutstanding,
         totalSales: customer.totalSales,
       });
@@ -35,7 +35,7 @@ export default function CustomerFormDialog({ open, onOpenChange, customer, onSub
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!form.name.trim()) e.name = "Name is required";
+    if (!form.customer_name.trim()) e.name = "Name is required";
     if (!form.phone.trim()) e.phone = "Phone is required";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -59,7 +59,7 @@ export default function CustomerFormDialog({ open, onOpenChange, customer, onSub
         <div className="space-y-3">
           <div>
             <Label>Customer Name</Label>
-            <Input value={form.name} onChange={e => set("name", e.target.value)} placeholder="e.g. Rajesh Kumar" />
+            <Input value={form.customer_name} onChange={e => set("name", e.target.value)} placeholder="e.g. Rajesh Kumar" />
             {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
           </div>
           <div>

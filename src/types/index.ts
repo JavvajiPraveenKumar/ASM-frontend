@@ -19,6 +19,7 @@ export interface Product {
   vehicleBrand: string;
   sellingPrice: number;
   currentStock: number;
+  stock?: number;
   lowStockThreshold: number;
   category: {
     name: string;
@@ -40,7 +41,7 @@ export interface Category {
 
 export interface Customer {
   id: string;
-  name: string;
+  customer_name: string;
   phone: string;
   totalOutstanding: number;
   totalSales: number;
