@@ -41,7 +41,8 @@ export interface Category {
 
 export interface Customer {
   id: string;
-  customer_name: string;
+  customer_name?: string;
+  name?: string;
   phone: string;
   totalOutstanding: number;
   totalSales: number;

@@ -97,15 +97,15 @@ export default function SellProduct() {
       toast({ title: "Cart is empty", variant: "destructive" });
       return;
     }
-    if (due > 0 && !selectedCustomer) {
-      toast({ title: "Customer required for credit sale", description: "Select a customer when payment is less than total", variant: "destructive" });
-      return;
-    }
     setShowConfirm(true);
   };
 
-  const confirmSale = () => {
-    toast({ title: "Sale completed!", description: `Total: ₹${cartTotal.toLocaleString()} | Paid: ₹${paid.toLocaleString()}` });
+  const confirmSale = (customerData?: { id?: string; name: string; phone?: string; isNew?: boolean }) => {
+    const customerLabel = customerData?.name ? ` | Customer: ${customerData.name}` : "";
+    toast({
+      title: "Sale completed!",
+      description: `Total: ₹${cartTotal.toLocaleString()} | Paid: ₹${paid.toLocaleString()}${customerLabel}`,
+    });
     setCart([]);
     setPaidAmount("");
     setSelectedCustomer("");
@@ -165,6 +165,7 @@ export default function SellProduct() {
         due={due}
         paymentMethod={paymentMethod}
         selectedCustomer={selectedCustomer}
+        onCustomerChange={setSelectedCustomer}
         selectedMechanic={selectedMechanic}
         commissionPreview={commissionPreview}
         onConfirm={confirmSale}
