@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import { Supplier } from "@/types";
+import { Supplier, SupplierPayload } from "@/types";
 
 export interface SupplierResponse {
     data: Supplier[];
@@ -27,13 +27,13 @@ export const SupplierService = {
     },
 
     // Create supplier
-    createSupplier: async (data: Omit<Supplier, "id">) => {
+    createSupplier: async (data: SupplierPayload) => {
         const response = await api.post<Supplier>("/suppliers", data);
         return response.data;
     },
 
     // Update supplier
-    updateSupplier: async (id: string, data: Partial<Supplier>) => {
+    updateSupplier: async (id: string, data: Partial<SupplierPayload>) => {
         const response = await api.patch<Supplier>(`/suppliers/${id}`, data);
         return response.data;
     },

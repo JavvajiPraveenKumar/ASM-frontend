@@ -26,6 +26,12 @@ export interface Product {
   };
 }
 
+export interface SupplierPayload {
+  name: string;
+  phone: string;
+  address: string;
+}
+
 export interface Supplier {
   id: string;
   name: string;
