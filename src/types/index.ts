@@ -39,13 +39,25 @@ export interface Category {
   description: string;
 }
 
+export interface CustomerPayload {
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  customer_address?: string;
+}
+
 export interface Customer {
   id: string;
   customer_name?: string;
   name?: string;
-  phone: string;
-  totalOutstanding: number;
-  totalSales: number;
+  customer_phone?: string;
+  phone?: string;
+  customer_email?: string;
+  email?: string;
+  customer_address?: string;
+  address?: string;
+  totalOutstanding?: number;
+  totalSales?: number;
 }
 
 export interface Sale {

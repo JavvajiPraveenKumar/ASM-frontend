@@ -60,6 +60,8 @@ export function SaleConfirmDialog({
   const [customerMode, setCustomerMode] = useState<"existing" | "new">("existing");
   const [selectedCustomerId, setSelectedCustomerId] = useState(selectedCustomer || "");
   const [newCustomerName, setNewCustomerName] = useState("");
+  const [newCustomerEmail, setNewCustomerEmail] = useState("");
+  const [newCustomerAddress,setNewCustomerAddress]=useState("");
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
   const [customersList, setCustomersList] = useState<Customer[]>(mockCustomers);
   const [isLoadingCustomers, setIsLoadingCustomers] = useState(false);
@@ -148,6 +150,7 @@ export function SaleConfirmDialog({
         setIsSubmitting(true);
         const res = await CustomerService.createCustomer({
           customer_name: newCustomerName.trim(),
+          customer_phone: newCustomerPhone.trim(),
           phone: newCustomerPhone.trim(),
           totalOutstanding: due,
           totalSales: cartTotal,
@@ -384,6 +387,34 @@ export function SaleConfirmDialog({
                         value={newCustomerPhone}
                         onChange={(e) => {
                           setNewCustomerPhone(e.target.value);
+                          setValidationError("");
+                        }}
+                      />
+                    </div>
+                     <div>
+                      <label className="text-xs font-medium text-muted-foreground flex justify-between mb-1">
+                        <span>Customer Email</span>
+                        {due > 0 && <span className="text-destructive font-semibold">* Required</span>}
+                      </label>
+                      <Input
+                        placeholder="e.g. Rahul Sharma@gmail.com"
+                        value={newCustomerEmail}
+                        onChange={(e) => {
+                          setNewCustomerEmail(e.target.value);
+                          setValidationError("");
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground flex justify-between mb-1">
+                        <span>Customer Address</span>
+                        {due > 0 && <span className="text-destructive font-semibold">* Required</span>}
+                      </label>
+                      <Input
+                        placeholder="e.g. Rahul Sharma"
+                        value={newCustomerAddress}
+                        onChange={(e) => {
+                          setNewCustomerAddress(e.target.value);
                           setValidationError("");
                         }}
                       />

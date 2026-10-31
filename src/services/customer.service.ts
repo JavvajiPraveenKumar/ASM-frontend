@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import { Customer } from "@/types";
+import { Customer, CustomerPayload } from "@/types";
 
 export interface CustomerResponse {
     data: Customer[];
@@ -27,13 +27,13 @@ export const CustomerService = {
     },
 
     // Create customer
-    createCustomer: async (data: Omit<Customer, "id">) => {
+    createCustomer: async (data: CustomerPayload | Partial<Customer>) => {
         const response = await api.post<Customer>("/customers", data);
         return response.data;
     },
 
     // Update customer
-    updateCustomer: async (id: string, data: Partial<Customer>) => {
+    updateCustomer: async (id: string, data: Partial<CustomerPayload | Customer>) => {
         const response = await api.patch<Customer>(`/customers/${id}`, data);
         return response.data;
     },
